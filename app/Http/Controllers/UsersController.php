@@ -7,6 +7,7 @@ use App\Reviews;
 use App\Http\Requests\UsersStoreFromRequest;
 use App\Http\Requests\UsersUpdateFromRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class UsersController extends Controller
 {
@@ -45,6 +46,46 @@ class UsersController extends Controller
         $user->password = $request->input('password');
         $user->save();
         return response($user, 201);
+    }
+
+    /**
+     * Store image and update user's image information
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store_image(Request $request)
+    {
+        if ($request->input('id') && $request->file('image_url')) {
+            $user = Users::find($request->input('id'));
+
+            $image = $request->file('image_url');
+            $path = $image->store('users', 's3');
+            $url = Storage::disk('s3')->url($path);
+
+            $user->image_url = $url;
+            $user->save();
+            return response($user, 201);
+        }
+    }
+
+    /**
+     * Destroy image if user have image and update user's image information
+     *
+     * @param  $user id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy_image($id)
+    {
+        $user = Users::find($id);
+        if ($user->image_url) {
+            $disk = Storage::disk('s3');
+            $disk->delete($user->image_url);
+
+            $user->image_url = null;
+            $user->save();
+            return response($user, 201);
+        }
     }
 
     /**
