@@ -18,6 +18,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::resource('/users', 'UsersController');
+Route::post('/users/image/', 'UsersController@store_image'); // Store image and update user's image information
+Route::delete('/users/image/{id}', 'UsersController@destroy_image'); // {$user_id} -> Destroy image if user have image and update user's image information
 Route::get('/users/salon/{id}', 'UsersController@salon_info'); // {$stylist_id} -> get stylist's salon information
 
 Route::resource('/offers', 'OffersController');
