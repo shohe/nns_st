@@ -4,9 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Laravel\Passport\HasApiTokens;
 
 class Users extends Model
 {
+
+    use HasApiTokens, Notifiable;
 
     /**
     * @return \Illuminate\Database\Eloquent\Relations\HasMany
